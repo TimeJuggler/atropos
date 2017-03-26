@@ -3,6 +3,8 @@ package com.codekasteel.entities;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -28,6 +30,12 @@ public class Meeting {
 
     @Column(nullable = false)
     private Date toDate;
+
+    @Column(nullable = false)
+    private boolean isWholeDayEvent = false;
+
+    @Enumerated(EnumType.STRING)
+    private AvailabilityStatus availability = AvailabilityStatus.BUSY;
 
     public Long getId() {
         return id;
@@ -67,5 +75,31 @@ public class Meeting {
 
     public void setToDate(Date toDate) {
         this.toDate = toDate;
+    }
+
+    public boolean isWholeDayEvent() {
+
+        return isWholeDayEvent;
+    }
+
+    public void setWholeDayEvent(boolean wholeDayEvent) {
+
+        isWholeDayEvent = wholeDayEvent;
+    }
+
+    @Override
+    public String toString() {
+
+        return "Meeting{" + "id=" + id + ", attendees=" + attendees + ", assets=" + assets + ", fromDate=" + fromDate + ", toDate=" + toDate + '}';
+    }
+
+    public AvailabilityStatus getAvailability() {
+
+        return availability;
+    }
+
+    public void setAvailability(AvailabilityStatus availability) {
+
+        this.availability = availability;
     }
 }

@@ -4,12 +4,16 @@ import com.codekasteel.entities.Meeting;
 import com.codekasteel.repositories.MeetingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @Service
-public class MeetingCommandService {
+public class MeetingService {
 
+    public static final Calendar CALENDAR = Calendar.getInstance();
     @Autowired
     MeetingRepository repository;
 
@@ -23,10 +27,25 @@ public class MeetingCommandService {
      */
     public boolean isNotOverlapping(Meeting meeting) {
 
-        List<Meeting> result = repository.findByDatesBetween(
+        List<Meeting> result = repository.findMeetingByDatesBetween(
         meeting.getFromDate(), meeting.getToDate(),
                 meeting.getAttendees().get(0));
 
         return result.isEmpty();
+    }
+
+    public void adjustWholeDayEventToDate(@RequestBody Meeting meeting) {
+
+        if (meeting.isWholeDayEvent()) {
+            meeting.setToDate(increaseToStartOfNextDay(meeting.getFromDate()));
+        }
+    }
+
+    private Date increaseToStartOfNextDay(Date fromDate) {
+
+        CALENDAR.setTime(fromDate);
+        CALENDAR.add(Calendar.DATE, 1);
+        CALENDAR.set(Calendar.HOUR_OF_DAY, 0);
+        return CALENDAR.getTime();
     }
 }

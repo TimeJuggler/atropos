@@ -18,14 +18,14 @@ public interface MeetingRepository extends CrudRepository<Meeting, Long> {
             Date to);
 
 
-    @Query("SELECT DISTINCT a FROM Meeting m " +
+    @Query("SELECT DISTINCT m FROM Meeting m " +
             "JOIN m.attendees a " +
             "WHERE a = :attendee " +
             "AND " +
             "(m.fromDate >= :from_date AND m.fromDate < :to_date OR " +
             "m.toDate > :from_date AND m.toDate <= :to_date OR " +
             "m.fromDate < :from_date AND m.toDate > :to_date)")
-    List<Meeting> findByDatesBetween(
+    List<Meeting> findMeetingByDatesBetween(
             @Temporal(TemporalType.TIMESTAMP) @Param("from_date") Date from,
                                      @Temporal(TemporalType.TIMESTAMP) @Param("to_date") Date to,
                                      @Param("attendee") String attendee);
