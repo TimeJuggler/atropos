@@ -5,6 +5,7 @@ import com.codekasteel.repositories.MeetingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 import javax.annotation.PostConstruct;
 import java.text.ParseException;
@@ -12,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.Collections;
 
 @SpringBootApplication
+@EnableDiscoveryClient
 public class AtroposApplication {
 
 	@Autowired
