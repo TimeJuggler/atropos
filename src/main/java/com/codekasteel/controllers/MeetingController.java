@@ -1,6 +1,6 @@
 package com.codekasteel.controllers;
 
-import com.codekasteel.commands.MeetingCommandService;
+import com.codekasteel.commands.MeetingService;
 import com.codekasteel.entities.Meeting;
 import com.codekasteel.repositories.MeetingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,18 +23,18 @@ import java.util.List;
 public class MeetingController {
 
     private static final String DD_MM_YYYY = "dd-MM-yyyy";
-
-    @Autowired
-    private MeetingCommandService meetingCommandService;
-
-
     @Autowired
     MeetingRepository repository;
+    @Autowired
+    private MeetingService meetingService;
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Meeting> createNewMeeting(@RequestBody Meeting meeting) {
 
-        if(meetingCommandService.isNotOverlapping(meeting)) {
+        meetingService.adjustWholeDayEventToDate(meeting);
+
+        if (meetingService.isNotOverlapping(meeting)) {
+
             Meeting created = repository.save(meeting);
 
             return new ResponseEntity<>(created, HttpStatus.CREATED);
@@ -44,13 +44,11 @@ public class MeetingController {
     }
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<List<Meeting>> getMeetingsInInterval(@RequestParam(name = "from") String from,
-                                                               @RequestParam(name = "to") String to,
-                                                               @RequestParam(name = "attendee") String attendee)
+    public ResponseEntity<List<Meeting>> getMeetingsBetweenDates(@RequestParam(name = "from") String from, @RequestParam(name = "to") String to, @RequestParam(name = "attendee") String attendee)
             throws ParseException {
 
         DateFormat df = new SimpleDateFormat(DD_MM_YYYY);
-        List<Meeting> results = repository.findByDatesBetween(df.parse(from), df.parse(to), attendee);
+        List<Meeting> results = repository.findMeetingByDatesBetween(df.parse(from), df.parse(to), attendee);
 
         return new ResponseEntity<>(results, HttpStatus.OK);
     }
@@ -70,5 +68,4 @@ public class MeetingController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
 }
